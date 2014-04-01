@@ -42,19 +42,19 @@ func Monitor(status *KegStatus, eventPipe chan int) {
 		err = binary.Read(reader, binary.LittleEndian, &temp)
 		status.Temperature = float32(temp) / 100
 		if err != nil {
-			return // Drop packet
+			continue // Drop packet
 		}
 		err = binary.Read(reader, binary.LittleEndian, &status.CurrentFlow)
 		if err != nil {
-			return // Drop packet
+			continue // Drop packet
 		}
 		err = binary.Read(reader, binary.LittleEndian, &status.Capacity)
 		if err != nil {
-			return // Drop packet
+			continue // Drop packet
 		}
 		err = binary.Read(reader, binary.LittleEndian, &status.Available)
 		if err != nil {
-			return // Drop packet
+			continue // Drop packet
 		}
 		status.LastUpdate = time.Now()
 		eventPipe <- 1
