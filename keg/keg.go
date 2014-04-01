@@ -3,14 +3,15 @@ package keg
 import (
 	"time"
 	"net"
-	"log"
+	"bytes"
+	"encoding/binary"
 )
 
 type KegStatus struct {
-	Temperature float64
-	CurrentFlow float64
-	Capacity float64
-	Available float64
+	Temperature float32
+	CurrentFlow int32
+	Capacity uint32
+	Available uint32
 	LastUpdate time.Time
 	Connection* net.UDPConn
 }
@@ -28,14 +29,33 @@ func Initialize() (KegStatus, error) {
 	return status, nil
 }
 
-func Monitor(status KegStatus) {
-	var buffer [512]byte
+func Monitor(status *KegStatus, eventPipe chan int) {
+	buffer := make([]byte, 512)
 	for {
-		length, from, err := status.Connection.ReadFromUDP(buffer[:])
+		length, _, err := status.Connection.ReadFromUDP(buffer[:])
 		if err != nil {
-			log.Fatal(err)
+			return // Drop packet
 		}
-		data := string(buffer[:length])
-		log.Print("<<[" + from.IP.String() + "]: " + data)
+		reader := bytes.NewReader(buffer[:length])
+		var temp int32
+		err = binary.Read(reader, binary.LittleEndian, &temp)
+		status.Temperature = float32(temp) / 100
+		if err != nil {
+			return // Drop packet
+		}
+		err = binary.Read(reader, binary.LittleEndian, &status.CurrentFlow)
+		if err != nil {
+			return // Drop packet
+		}
+		err = binary.Read(reader, binary.LittleEndian, &status.Capacity)
+		if err != nil {
+			return // Drop packet
+		}
+		err = binary.Read(reader, binary.LittleEndian, &status.Available)
+		if err != nil {
+			return // Drop packet
+		}
+		status.LastUpdate = time.Now()
+		eventPipe <- 1
 	}
 }

@@ -11,8 +11,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	go keg.Monitor(status)
+	eventPipe := make(chan int)
+	go keg.Monitor(&status, eventPipe)
 	log.Println("Listening for keg on " + status.Connection.LocalAddr().String())
-	select {
+	for {
+		<-eventPipe
+		log.Printf("Temperature: %f deg, current flow: %d, capacity: %d, available: %d\n",
+			status.Temperature, status.CurrentFlow, status.Capacity, status.Available)
 	}
 }
