@@ -3,11 +3,18 @@ package main
 import (
 	"log"
 	"github.com/AspenWare/ardrinko-server/keg"
+	. "github.com/AspenWare/ardrinko-server/config"
 )
 
+var config Config
+
 func main() {
+	if err := ReadConfig("config.ini", &config); err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Loaded config.ini")
 	log.Println("Spinning up Ardrinko server...")
-	status, err := keg.Initialize()
+	status, err := keg.Initialize(&config)
 	if err != nil {
 		log.Fatal(err)
 	}

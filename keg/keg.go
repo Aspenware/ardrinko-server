@@ -5,6 +5,7 @@ import (
 	"net"
 	"bytes"
 	"encoding/binary"
+	. "github.com/AspenWare/ardrinko-server/config"
 )
 
 type KegStatus struct {
@@ -16,11 +17,11 @@ type KegStatus struct {
 	Connection* net.UDPConn
 }
 
-func Initialize() (KegStatus, error) {
+func Initialize(config *Config) (KegStatus, error) {
 	status := KegStatus {}
 	socket, err := net.ListenUDP("udp4", &net.UDPAddr {
-		IP: net.ParseIP("0.0.0.0"),
-		Port: 59312,
+		IP: net.ParseIP(config.UDP.Endpoint),
+		Port: config.UDP.Port,
 	})
 	if err != nil {
 		return status, err
