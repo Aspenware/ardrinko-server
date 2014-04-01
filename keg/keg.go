@@ -18,7 +18,7 @@ type KegStatus struct {
 func Initialize() (KegStatus, error) {
 	status := KegStatus {}
 	socket, err := net.ListenUDP("udp4", &net.UDPAddr {
-		IP: net.ParseIP("127.0.0.1"), //net.IPv4bcast,
+		IP: net.ParseIP("0.0.0.0"),
 		Port: 59312,
 	})
 	if err != nil {
