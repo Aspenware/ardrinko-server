@@ -27,7 +27,7 @@ func main() {
 	for {
 		<-eventPipe
 		statusPipe<-status
-		log.Printf("Temperature: %f deg, current flow: %d, capacity: %d, available: %d, door: %d\n",
+		log.Printf("Temperature: %f deg, current flow: %f, capacity: %f, available: %f, door: %d\n",
 			status.Temperature, status.CurrentFlow, status.Capacity, status.Available, status.Door)
 	}
 }

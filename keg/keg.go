@@ -10,9 +10,9 @@ import (
 
 type KegStatus struct {
 	Temperature float32
-	CurrentFlow int32
-	Capacity uint32
-	Available uint32
+	CurrentFlow float32
+	Capacity float32
+	Available float32
 	Door uint32
 	LastUpdate time.Time
 	Connection* net.UDPConn
@@ -40,20 +40,26 @@ func Monitor(status *KegStatus, eventPipe chan int) {
 		}
 		reader := bytes.NewReader(buffer[:length])
 		var temp int32
+		var flow int32
+		var capacity int32
+		var available int32
 		err = binary.Read(reader, binary.LittleEndian, &temp)
 		status.Temperature = float32(temp) / 100
 		if err != nil {
 			continue // Drop packet
 		}
-		err = binary.Read(reader, binary.LittleEndian, &status.CurrentFlow)
+		err = binary.Read(reader, binary.LittleEndian, &flow)
+		status.CurrentFlow = float32(flow) / 100
 		if err != nil {
 			continue // Drop packet
 		}
-		err = binary.Read(reader, binary.LittleEndian, &status.Capacity)
+		err = binary.Read(reader, binary.LittleEndian, &capacity)
+		status.Capacity = float32(capacity) / 100
 		if err != nil {
 			continue // Drop packet
 		}
-		err = binary.Read(reader, binary.LittleEndian, &status.Available)
+		err = binary.Read(reader, binary.LittleEndian, &available)
+		status.Available = float32(available) / 100
 		if err != nil {
 			continue // Drop packet
 		}
