@@ -23,7 +23,7 @@ func main() {
 	log.Println("Listening for keg on " + status.Connection.LocalAddr().String())
 	for {
 		<-eventPipe
-		log.Printf("Temperature: %f deg, current flow: %d, capacity: %d, available: %d\n",
-			status.Temperature, status.CurrentFlow, status.Capacity, status.Available)
+		log.Printf("Temperature: %f deg, current flow: %d, capacity: %d, available: %d, door: %d\n",
+			status.Temperature, status.CurrentFlow, status.Capacity, status.Available, status.Door)
 	}
 }

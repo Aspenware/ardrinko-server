@@ -13,6 +13,7 @@ type KegStatus struct {
 	CurrentFlow int32
 	Capacity uint32
 	Available uint32
+	Door uint32
 	LastUpdate time.Time
 	Connection* net.UDPConn
 }
@@ -53,6 +54,10 @@ func Monitor(status *KegStatus, eventPipe chan int) {
 			continue // Drop packet
 		}
 		err = binary.Read(reader, binary.LittleEndian, &status.Available)
+		if err != nil {
+			continue // Drop packet
+		}
+		err = binary.Read(reader, binary.LittleEndian, &status.Door)
 		if err != nil {
 			continue // Drop packet
 		}
